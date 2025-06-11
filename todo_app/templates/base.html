@@ -9,15 +9,32 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #0f0f0f;
+            --border-color: #333;
+            --text-primary: #f0f0f0;
+            --text-secondary: #aaaaaa;
+            --accent-color: #bb86fc;
+            --error-color: #cf6679;
+            --success-color: #03dac6;
+            --warning-color: #ffb74d;
+            --info-color: #64b5f6;
+        }
+        
         body {
             min-height: 100vh;
             overflow-x: hidden;
-            background-color: #f8f9fa;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
         }
+        
         .sidebar {
             min-height: 100vh;
-            box-shadow: 0 0 10px rgba(0,0,0,.1);
-            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,.5);
+            background-color: var(--sidebar-bg);
             position: fixed;
             top: 0;
             bottom: 0;
@@ -25,55 +42,205 @@
             z-index: 100;
             padding: 0;
             transition: all 0.3s;
+            border-right: 1px solid var(--border-color);
         }
+        
         .sidebar .nav-link {
-            color: #495057;
+            color: var(--text-secondary);
             padding: 0.75rem 1rem;
             border-radius: 0;
         }
+        
         .sidebar .nav-link:hover {
-            background-color: #f8f9fa;
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-primary);
         }
+        
         .sidebar .nav-link.active {
-            color: #007bff;
-            background-color: #e9ecef;
-            border-left: 4px solid #007bff;
+            color: var(--accent-color);
+            background-color: rgba(187, 134, 252, 0.1);
+            border-left: 4px solid var(--accent-color);
         }
+        
         .sidebar .nav-link i {
             margin-right: 10px;
         }
+        
         main {
             margin-left: 250px;
             padding: 20px;
             transition: all 0.3s;
         }
+        
         .content-wrapper {
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,.05);
+            box-shadow: 0 0 15px rgba(0,0,0,.2);
             padding: 20px;
+            border: 1px solid var(--border-color);
         }
+        
         .logo {
             text-align: center;
             padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--border-color);
         }
+        
         .logo h3 {
             margin: 0;
             font-weight: 700;
+            color: var(--accent-color);
         }
+        
         .badge-priority-high {
-            background-color: #dc3545;
-            color: white;
+            background-color: var(--error-color);
+            color: #000000;
         }
+        
         .badge-priority-medium {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: var(--warning-color);
+            color: #000000;
         }
+        
         .badge-priority-low {
-            background-color: #28a745;
-            color: white;
+            background-color: var(--success-color);
+            color: #000000;
         }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,.2);
+        }
+        
+        .card-header {
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .table {
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        .table-dark {
+            background-color: var(--sidebar-bg);
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: rgba(255,255,255,0.03);
+        }
+        
+        .form-control, .form-select {
+            background-color: #2d2d2d;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #2d2d2d;
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(187, 134, 252, 0.2);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000000;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #a06ce3;
+            border-color: #a06ce3;
+            color: #000000;
+        }
+        
+        .btn-secondary {
+            background-color: #484848;
+            border-color: #484848;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: #000000;
+        }
+        
+        .btn-danger {
+            background-color: var(--error-color);
+            border-color: var(--error-color);
+            color: #000000;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: #000000;
+        }
+        
+        .alert-success {
+            background-color: rgba(3, 218, 198, 0.15);
+            border-color: rgba(3, 218, 198, 0.3);
+            color: var(--success-color);
+        }
+        
+        .alert-danger {
+            background-color: rgba(207, 102, 121, 0.15);
+            border-color: rgba(207, 102, 121, 0.3);
+            color: var(--error-color);
+        }
+        
+        .alert-warning {
+            background-color: rgba(255, 183, 77, 0.15);
+            border-color: rgba(255, 183, 77, 0.3);
+            color: var(--warning-color);
+        }
+        
+        .alert-info {
+            background-color: rgba(100, 181, 246, 0.15);
+            border-color: rgba(100, 181, 246, 0.3);
+            color: var(--info-color);
+        }
+        
+        .page-link {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        .page-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000000;
+        }
+        
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+        
+        .border-bottom {
+            border-color: var(--border-color) !important;
+        }
+        
+        .progress {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .text-decoration-none {
+            color: var(--text-secondary);
+        }
+        
+        .btn-link {
+            color: var(--text-secondary);
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 80px;
@@ -127,7 +294,7 @@
             <li class="nav-item mt-5">
                 <form method="post" action="{% url 'logout' %}" class="nav-link">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-link p-0 text-decoration-none" style="color: #495057;">
+                    <button type="submit" class="btn btn-link p-0 text-decoration-none">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </button>
