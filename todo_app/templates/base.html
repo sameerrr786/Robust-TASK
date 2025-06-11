@@ -41,8 +41,52 @@
             left: 0;
             z-index: 100;
             padding: 0;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             border-right: 1px solid var(--border-color);
+            width: 250px;
+            transform: translateX(0);
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-250px);
+        }
+        
+        #content-wrapper-main {
+            margin-left: 250px;
+            transition: all 0.3s ease;
+        }
+        
+        #content-wrapper-main.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 150;
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+        
+        .sidebar-toggle:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .sidebar-toggle.active {
+            left: 265px;
         }
         
         .sidebar .nav-link {
@@ -69,7 +113,7 @@
         main {
             margin-left: 250px;
             padding: 20px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
         
         .content-wrapper {
@@ -264,9 +308,14 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Sidebar -->
     {% if user.is_authenticated %}
-    <div class="col-md-3 col-lg-2 sidebar">
+    <!-- Sidebar toggle button -->
+    <button id="sidebarToggle" class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <div id="sidebar" class="col-md-3 col-lg-2 sidebar">
         <div class="logo">
             <h3>Todo App</h3>
         </div>
@@ -305,7 +354,7 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main class="{% if not user.is_authenticated %}w-100 p-0 m-0{% endif %}">
+    <main id="content-wrapper-main" class="{% if not user.is_authenticated %}w-100 p-0 m-0{% endif %}">
         {% if user.is_authenticated %}
         <div class="container-fluid">
             <div class="row">
@@ -344,6 +393,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Sidebar toggle functionality
+            $('#sidebarToggle').click(function() {
+                $('#sidebar').toggleClass('collapsed');
+                $('#content-wrapper-main').toggleClass('expanded');
+                $(this).toggleClass('active');
+            });
+            
+            // Handle small screens - collapse sidebar by default on mobile
+            function checkWidth() {
+                if ($(window).width() < 768) {
+                    $('#sidebar').addClass('collapsed');
+                    $('#content-wrapper-main').addClass('expanded');
+                    $('#sidebarToggle').addClass('active');
+                }
+            }
+            
+            // Check width on document ready
+            checkWidth();
+            
+            // Check width on window resize
+            $(window).resize(checkWidth);
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html> 
