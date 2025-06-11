@@ -216,7 +216,15 @@
         }
         
         .table-striped > tbody > tr:nth-of-type(odd) {
-            background-color: rgba(255,255,255,0.03);
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(even) {
+            background-color: var(--card-bg);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(58, 123, 213, 0.1);
         }
         
         .form-control, .form-select {
@@ -348,7 +356,7 @@
                 font-size: 1rem;
             }
         }
-        h5{
+        h5 {
             color: black;
         }
     </style>
@@ -390,6 +398,12 @@
                 <a class="nav-link {% if request.resolver_match.url_name == 'create_task' %}active{% endif %}" href="{% url 'create_task' %}">
                     <i class="fas fa-plus"></i>
                     <span>Create Task</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}" href="{% url 'user_list' %}">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Users</span>
                 </a>
             </li>
             {% endif %}

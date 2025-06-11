@@ -65,4 +65,18 @@ class TaskFilterForm(forms.Form):
     status = forms.ChoiceField(choices=FILTER_CHOICES, required=False)
     priority = forms.ChoiceField(choices=PRIORITY_CHOICES, required=False)
     assigned_to = forms.ModelChoiceField(queryset=User.objects.all(), required=False, empty_label="All Users")
-    search = forms.CharField(required=False) 
+    search = forms.CharField(required=False)
+
+class UserEditForm(forms.ModelForm):
+    """Form for admins to edit user information"""
+    email = forms.EmailField(max_length=254, required=True)
+    
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'is_active')
+        
+    def __init__(self, *args, **kwargs):
+        super(UserEditForm, self).__init__(*args, **kwargs)
+        # Make is_active field a checkbox
+        self.fields['is_active'].widget = forms.CheckboxInput()
+        self.fields['is_active'].label = 'Active' 

@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.http import HttpResponseForbidden
 
 from .models import Task, Comment
-from .forms import SignUpForm, TaskForm, CommentForm, TaskFilterForm, UserRoleForm
+from .forms import SignUpForm, TaskForm, CommentForm, TaskFilterForm, UserRoleForm, UserEditForm
 
 def signup(request):
     if request.method == 'POST':
@@ -236,3 +236,91 @@ def update_task_status(request, task_id):
         return redirect(request.POST.get('next', reverse('task_list')))
     
     return redirect('task_detail', task_id=task.id)
+
+@login_required
+def user_list(request):
+    user = request.user
+    is_admin = user.groups.filter(name='Admin').exists()
+    
+    if not is_admin:
+        return HttpResponseForbidden("You don't have permission to view this page")
+    
+    users = User.objects.all().order_by('username')
+    
+    # Filter users if search is provided
+    search_term = request.GET.get('search', '')
+    if search_term:
+        users = users.filter(
+            Q(username__icontains=search_term) |
+            Q(email__icontains=search_term)
+        )
+    
+    # Paginate results
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'todo_app/user_list.html', {
+        'page_obj': page_obj,
+        'search_term': search_term,
+        'is_admin': True,
+    })
+
+@login_required
+def delete_user(request, user_id):
+    admin_user = request.user
+    is_admin = admin_user.groups.filter(name='Admin').exists()
+    
+    if not is_admin:
+        return HttpResponseForbidden("You don't have permission to delete users")
+    
+    if admin_user.id == user_id:
+        messages.error(request, "You cannot delete your own account")
+        return redirect('user_list')
+    
+    user_to_delete = get_object_or_404(User, pk=user_id)
+    
+    if request.method == 'POST':
+        username = user_to_delete.username
+        user_to_delete.delete()
+        messages.success(request, f'User {username} deleted successfully!')
+        return redirect('user_list')
+    
+    return render(request, 'todo_app/user_confirm_delete.html', {'user_to_delete': user_to_delete})
+
+@login_required
+def edit_user(request, user_id):
+    admin_user = request.user
+    is_admin = admin_user.groups.filter(name='Admin').exists()
+    
+    if not is_admin:
+        return HttpResponseForbidden("You don't have permission to edit users")
+    
+    user_to_edit = get_object_or_404(User, pk=user_id)
+    
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=user_to_edit)
+        role_form = UserRoleForm(request.POST)
+        
+        if form.is_valid() and role_form.is_valid():
+            # Save user data
+            form.save()
+            
+            # Update user's role
+            new_group = role_form.cleaned_data['role']
+            user_to_edit.groups.clear()
+            user_to_edit.groups.add(new_group)
+            
+            messages.success(request, f'User {user_to_edit.username} updated successfully!')
+            return redirect('user_list')
+    else:
+        form = UserEditForm(instance=user_to_edit)
+        # Pre-select current group
+        current_group = user_to_edit.groups.first()
+        role_form = UserRoleForm(initial={'role': current_group})
+    
+    return render(request, 'todo_app/user_form.html', {
+        'form': form,
+        'role_form': role_form,
+        'user_to_edit': user_to_edit,
+    })
