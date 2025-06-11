@@ -359,7 +359,7 @@
     <!-- App Header -->
     <div class="app-header">
         <span class="app-logo">Tactix</span>
-        <h2>{% block page_title %}{% endblock %}</h2>
+        <h2 id="headerTitle"></h2>
     </div>
     
     <!-- Sidebar toggle button -->
@@ -449,6 +449,10 @@
     
     <script>
         $(document).ready(function() {
+            // Set the header title to match the page title
+            var pageTitle = $('h2:contains("Dashboard"), h2:contains("Tasks"), h2:contains("Create"), h2:contains("Edit"), h2:contains("Delete")').first().text();
+            $('#headerTitle').text(pageTitle);
+            
             // Sidebar toggle functionality
             $('#sidebarToggle').click(function() {
                 $('#sidebar').toggleClass('collapsed');
