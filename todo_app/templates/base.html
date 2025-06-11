@@ -17,9 +17,11 @@
             --border-color: #333;
             --text-primary: #f0f0f0;
             --text-secondary: #aaaaaa;
-            --accent-color: #bb86fc;
+            --accent-color: #3a7bd5;
+            --accent-gradient-start: #00d2ff;
+            --accent-gradient-end: #3a7bd5;
             --error-color: #cf6679;
-            --success-color: #03dac6;
+            --success-color: #00c9a7;
             --warning-color: #ffb74d;
             --info-color: #64b5f6;
         }
@@ -28,6 +30,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             background-color: var(--dark-bg);
+            background-image: linear-gradient(to bottom right, var(--dark-bg), #1a1a2e);
             color: var(--text-primary);
         }
         
@@ -35,6 +38,7 @@
             min-height: 100vh;
             box-shadow: 0 0 10px rgba(0,0,0,.5);
             background-color: var(--sidebar-bg);
+            background-image: linear-gradient(to bottom, #111111, #0a142e);
             position: fixed;
             top: 0;
             bottom: 0;
@@ -42,7 +46,7 @@
             z-index: 100;
             padding: 0;
             transition: all 0.3s ease;
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid rgba(58, 123, 213, 0.3);
             width: 250px;
             transform: translateX(0);
         }
@@ -65,7 +69,7 @@
             top: 15px;
             left: 15px;
             z-index: 150;
-            background-color: var(--accent-color);
+            background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
             color: #000;
             border: none;
             border-radius: 50%;
@@ -89,6 +93,40 @@
             left: 265px;
         }
         
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            padding-left: 270px;
+            background: linear-gradient(90deg, rgba(10, 20, 46, 0.9), rgba(18, 18, 18, 0.8));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(58, 123, 213, 0.2);
+            height: 60px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .app-header h2 {
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .app-header .app-logo {
+            background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+        
         .sidebar .nav-link {
             color: var(--text-secondary);
             padding: 0.75rem 1rem;
@@ -102,7 +140,7 @@
         
         .sidebar .nav-link.active {
             color: var(--accent-color);
-            background-color: rgba(187, 134, 252, 0.1);
+            background-color: rgba(58, 123, 213, 0.1);
             border-left: 4px solid var(--accent-color);
         }
         
@@ -113,15 +151,18 @@
         main {
             margin-left: 250px;
             padding: 20px;
+            padding-top: 80px;  /* Added padding for the header */
             transition: all 0.3s ease;
         }
         
         .content-wrapper {
             background-color: var(--card-bg);
+            background-image: linear-gradient(to bottom, rgba(30, 30, 46, 0.8), rgba(30, 30, 46, 0.6));
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0,0,0,.2);
             padding: 20px;
             border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
         
         .logo {
@@ -133,7 +174,10 @@
         .logo h3 {
             margin: 0;
             font-weight: 700;
-            color: var(--accent-color);
+            background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .badge-priority-high {
@@ -158,7 +202,7 @@
         }
         
         .card-header {
-            background-color: rgba(0,0,0,0.2);
+            background: linear-gradient(90deg, rgba(58, 123, 213, 0.2), rgba(0, 0, 0, 0.1));
             border-bottom: 1px solid var(--border-color);
         }
         
@@ -189,14 +233,14 @@
         }
         
         .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
+            background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+            border-color: transparent;
             color: #000000;
         }
         
         .btn-primary:hover, .btn-primary:focus {
-            background-color: #a06ce3;
-            border-color: #a06ce3;
+            background: linear-gradient(135deg, #00c6f0, #2e72d2);
+            border-color: transparent;
             color: #000000;
         }
         
@@ -304,11 +348,20 @@
                 font-size: 1rem;
             }
         }
+        h5{
+            color: black;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     {% if user.is_authenticated %}
+    <!-- App Header -->
+    <div class="app-header">
+        <span class="app-logo">Tactix</span>
+        <h2>{% block page_title %}{% endblock %}</h2>
+    </div>
+    
     <!-- Sidebar toggle button -->
     <button id="sidebarToggle" class="sidebar-toggle">
         <i class="fas fa-bars"></i>
@@ -317,7 +370,7 @@
     <!-- Sidebar -->
     <div id="sidebar" class="col-md-3 col-lg-2 sidebar">
         <div class="logo">
-            <h3>Todo App</h3>
+            <h3>Tactix</h3>
         </div>
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -401,6 +454,16 @@
                 $('#sidebar').toggleClass('collapsed');
                 $('#content-wrapper-main').toggleClass('expanded');
                 $(this).toggleClass('active');
+                
+                // Show app header when sidebar is collapsed
+                if($('#sidebar').hasClass('collapsed')) {
+                    $('.app-header').css('padding-left', '70px');
+                    $('.app-header .app-logo').css('display', 'block');
+                } else {
+                    $('.app-header').css('padding-left', '270px');
+                    // Don't hide the app logo in the header when sidebar is visible
+                    $('.app-header .app-logo').css('display', 'block');
+                }
             });
             
             // Handle small screens - collapse sidebar by default on mobile
@@ -409,6 +472,14 @@
                     $('#sidebar').addClass('collapsed');
                     $('#content-wrapper-main').addClass('expanded');
                     $('#sidebarToggle').addClass('active');
+                    $('.app-header').css('padding-left', '70px');
+                } else {
+                    // For larger screens, adjust header padding based on sidebar state
+                    if($('#sidebar').hasClass('collapsed')) {
+                        $('.app-header').css('padding-left', '70px');
+                    } else {
+                        $('.app-header').css('padding-left', '270px');
+                    }
                 }
             }
             
