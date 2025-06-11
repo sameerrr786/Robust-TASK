@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Todo App{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,.1);
+            background-color: #ffffff;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 0;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 0;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+            background-color: #e9ecef;
+            border-left: 4px solid #007bff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        main {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .content-wrapper {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,.05);
+            padding: 20px;
+        }
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .logo h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+        .badge-priority-high {
+            background-color: #dc3545;
+            color: white;
+        }
+        .badge-priority-medium {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge-priority-low {
+            background-color: #28a745;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                text-align: center;
+            }
+            .sidebar .nav-link i {
+                margin-right: 0;
+                font-size: 1.25rem;
+            }
+            .sidebar .nav-link span {
+                display: none;
+            }
+            main {
+                margin-left: 80px;
+            }
+            .logo h3 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    {% if user.is_authenticated %}
+    <div class="col-md-3 col-lg-2 sidebar">
+        <div class="logo">
+            <h3>Todo App</h3>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'task_list' %}active{% endif %}" href="{% url 'task_list' %}">
+                    <i class="fas fa-tasks"></i>
+                    <span>Tasks</span>
+                </a>
+            </li>
+            {% if user.groups.all.0.name == "Admin" %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'create_task' %}active{% endif %}" href="{% url 'create_task' %}">
+                    <i class="fas fa-plus"></i>
+                    <span>Create Task</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item mt-5">
+                <form method="post" action="{% url 'logout' %}" class="nav-link">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0 text-decoration-none" style="color: #495057;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="{% if not user.is_authenticated %}w-100 p-0 m-0{% endif %}">
+        {% if user.is_authenticated %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>{% block page_title %}{% endblock %}</h2>
+                        <div>
+                            <span class="me-2">Welcome, {{ user.username }}</span>
+                            <span class="badge bg-secondary">{{ user.groups.all.0.name }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="content-wrapper">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        {% block auth_content %}{% endblock %}
+        {% endif %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

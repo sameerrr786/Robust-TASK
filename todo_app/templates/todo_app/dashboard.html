@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Todo App{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Completed Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ completed_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Pending Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_admin %}
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            In Progress Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ in_progress_tasks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-spinner fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if is_admin %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tasks by Priority</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="text-muted">High Priority</div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ tasks_by_priority.high|default:0|floatformat:0 }}%" 
+                            aria-valuenow="{{ tasks_by_priority.high|default:0 }}" aria-valuemin="0" 
+                            aria-valuemax="{{ total_tasks }}">{{ tasks_by_priority.high|default:0 }}</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted">Medium Priority</div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ tasks_by_priority.medium|default:0|floatformat:0 }}%" 
+                            aria-valuenow="{{ tasks_by_priority.medium|default:0 }}" aria-valuemin="0" 
+                            aria-valuemax="{{ total_tasks }}">{{ tasks_by_priority.medium|default:0 }}</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-muted">Low Priority</div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ tasks_by_priority.low|default:0|floatformat:0 }}%" 
+                            aria-valuenow="{{ tasks_by_priority.low|default:0 }}" aria-valuemin="0" 
+                            aria-valuemax="{{ total_tasks }}">{{ tasks_by_priority.low|default:0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Top Users by Tasks</h6>
+            </div>
+            <div class="card-body">
+                {% if users_with_task_count %}
+                <ul class="list-group">
+                    {% for user in users_with_task_count %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ user.username }}
+                        <span class="badge bg-primary rounded-pill">{{ user.task_count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-center">No tasks assigned yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if is_admin %}
+<div class="text-right mt-3">
+    <a href="{% url 'create_task' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Create New Task
+    </a>
+</div>
+{% endif %}
+{% endblock %} 

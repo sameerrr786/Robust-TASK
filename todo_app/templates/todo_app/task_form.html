@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_create %}Create Task{% else %}Edit Task{% endif %} | Todo App{% endblock %}
+
+{% block page_title %}{% if is_create %}Create Task{% else %}Edit Task: {{ task.title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">{% if is_create %}Create New Task{% else %}Edit Task{% endif %}</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                <h6 class="alert-heading">Please correct the errors below:</h6>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" 
+                       class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                       value="{{ form.title.value|default:'' }}" required>
+                {% if form.title.errors %}
+                <div class="invalid-feedback">{{ form.title.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.deadline.id_for_label }}" class="form-label">{{ form.deadline.label }}</label>
+                <input type="datetime-local" name="{{ form.deadline.name }}" id="{{ form.deadline.id_for_label }}" 
+                       class="form-control {% if form.deadline.errors %}is-invalid{% endif %}" 
+                       value="{{ form.deadline.value|date:'Y-m-d\TH:i' }}" {% if form.deadline.value %}value="{{ form.deadline.value|date:'Y-m-d\TH:i' }}"{% endif %}>
+                {% if form.deadline.errors %}
+                <div class="invalid-feedback">{{ form.deadline.errors.0 }}</div>
+                {% endif %}
+                <small class="form-text text-muted">Optional. Format: YYYY-MM-DD HH:MM</small>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.priority.id_for_label }}" class="form-label">{{ form.priority.label }}</label>
+                    <select name="{{ form.priority.name }}" id="{{ form.priority.id_for_label }}" 
+                            class="form-select {% if form.priority.errors %}is-invalid{% endif %}">
+                        {% for value, text in form.fields.priority.choices %}
+                        <option value="{{ value }}" {% if form.priority.value == value %}selected{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.priority.errors %}
+                    <div class="invalid-feedback">{{ form.priority.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                    <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" 
+                            class="form-select {% if form.status.errors %}is-invalid{% endif %}">
+                        {% for value, text in form.fields.status.choices %}
+                        <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.status.errors %}
+                    <div class="invalid-feedback">{{ form.status.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if form.assigned_to %}
+            <div class="mb-3">
+                <label for="{{ form.assigned_to.id_for_label }}" class="form-label">{{ form.assigned_to.label }}</label>
+                <select name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.id_for_label }}" 
+                        class="form-select {% if form.assigned_to.errors %}is-invalid{% endif %}">
+                    {% for user_obj in form.fields.assigned_to.queryset %}
+                    <option value="{{ user_obj.id }}" {% if form.assigned_to.value == user_obj.id|stringformat:"i" %}selected{% endif %}>{{ user_obj.username }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.assigned_to.errors %}
+                <div class="invalid-feedback">{{ form.assigned_to.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">{% if is_create %}Create Task{% else %}Save Changes{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 
